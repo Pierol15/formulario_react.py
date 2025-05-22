@@ -26,7 +26,7 @@ ia_preguntas = [
     "Se interactúa regularmente con herramientas automatizadas.",
     "Hay interés institucional por ampliar el uso de inteligencia artificial.",
     "La adopción de IA ha sido gradual y organizada.",
-    "La IA ha transformado procesos clave dentro de mi organización."
+    "La IA ha transformado procesos c   lave dentro de mi organización."
 ]
 ia_respuestas = []
 for i, p in enumerate(ia_preguntas):
@@ -91,8 +91,8 @@ if st.button("Enviar formulario"):
  
     # 4. Si la hoja no tiene encabezados, los agregamos
     primer_fila = sheet.row_values(1)
-if not primer_fila or all(cell.strip() == "" for cell in primer_fila):
-    sheet.insert_row(encabezados, 1)
+    if not primer_fila or all(cell.strip() == "" for cell in primer_fila):
+        sheet.insert_row(encabezados, 1)
 
     # 5. Enviar datos
     sheet.append_row(fila)
