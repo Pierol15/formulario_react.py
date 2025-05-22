@@ -3,7 +3,7 @@ import pandas as pd
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
-# Configuración de la página
+
 st.set_page_config(page_title="Formulario académico", layout="centered")
 st.title("Formulario académico: Impacto de la IA en el mercado laboral post-pandemia")
 st.markdown("Este formulario es parte de un trabajo universitario. Tus respuestas son anónimas y serán utilizadas solo con fines académicos.")
@@ -80,15 +80,19 @@ if st.button("Enviar formulario"):
     credentials = ServiceAccountCredentials.from_json_keyfile_dict(service_account_info, scope)
     client = gspread.authorize(credentials)
 
-    # 2. Conectarse al documento y hoja
-    nombre_hoja = "Respuestas_Formulario_IA"
-  
-    sheet = client.open(nombre_hoja).sheet1  
 
-    # 3. Preparar los datos como una fila
+    nombre_hoja = "Respuestas_Formulario_IA"
+    sheet = client.open(nombre_hoja).sheet1
+
+    # 3. Preparar encabezados y datos
+    encabezados = ["Edad"] + [f"IA Pregunta {i+1}" for i in range(len(ia_preguntas))] + [f"Laboral Pregunta {i+1}" for i in range(len(laboral_preguntas))]
     fila = [edad] + ia_respuestas + laboral_respuestas
 
-    # 4. Enviar a la hoja
+ 
+    if sheet.get_all_values() == []:
+        sheet.append_row(encabezados)
+
+    # 5. Enviar datos
     sheet.append_row(fila)
 
     st.success("¡Gracias por tu participación! Tus respuestas han sido registradas en Google Sheets.")
