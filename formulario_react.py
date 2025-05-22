@@ -1,7 +1,9 @@
 import streamlit as st
 import pandas as pd
-import os
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
 
+# Configuración de la página
 st.set_page_config(page_title="Formulario académico", layout="centered")
 st.title("Formulario académico: Impacto de la IA en el mercado laboral post-pandemia")
 st.markdown("Este formulario es parte de un trabajo universitario. Tus respuestas son anónimas y serán utilizadas solo con fines académicos.")
@@ -59,16 +61,19 @@ for i, p in enumerate(laboral_preguntas):
 
 # Envío del formulario
 if st.button("Enviar formulario"):
-    datos = {"Edad": edad}
+    # 1. Autenticación con Google Sheets
+    scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+    credentials = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
+    client = gspread.authorize(credentials)
 
-    for i in range(len(ia_preguntas)):
-        datos[f"Pregunta {i+1}"] = ia_respuestas[i]
+    # 2. Conectarse al documento y hoja
+    nombre_hoja = "FormularioIA-Datos"  # Cambia esto si tu hoja tiene otro nombre
+    sheet = client.open(nombre_hoja).sheet1  # Primera hoja del archivo
 
-    for i in range(len(laboral_preguntas)):
-        datos[f"Pregunta {i+11}"] = laboral_respuestas[i]
+    # 3. Preparar los datos como una fila
+    fila = [edad] + ia_respuestas + laboral_respuestas
 
-    df = pd.DataFrame([datos])
-    archivo = "respuestas_formulario_final.csv"
-    encabezado = not os.path.exists(archivo)
-    df.to_csv(archivo, mode="a", header=encabezado, index=False, encoding="utf-8-sig")
-    st.success("¡Gracias por tu participación! Tus respuestas han sido registradas.")
+    # 4. Enviar a la hoja
+    sheet.append_row(fila)
+
+    st.success("¡Gracias por tu participación! Tus respuestas han sido registradas en Google Sheets.")
