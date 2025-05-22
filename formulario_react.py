@@ -61,9 +61,23 @@ for i, p in enumerate(laboral_preguntas):
 
 # Envío del formulario
 if st.button("Enviar formulario"):
-    # 1. Autenticación con Google Sheets
+    # 1. Autenticación con Google Sheets usando credenciales desde secrets.toml
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-    credentials = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
+
+    service_account_info = {
+        "type": st.secrets["google_service_account"]["type"],
+        "project_id": st.secrets["google_service_account"]["project_id"],
+        "private_key_id": st.secrets["google_service_account"]["private_key_id"],
+        "private_key": st.secrets["google_service_account"]["private_key"].replace('\\n', '\n'),
+        "client_email": st.secrets["google_service_account"]["client_email"],
+        "client_id": st.secrets["google_service_account"]["client_id"],
+        "auth_uri": st.secrets["google_service_account"]["auth_uri"],
+        "token_uri": st.secrets["google_service_account"]["token_uri"],
+        "auth_provider_x509_cert_url": st.secrets["google_service_account"]["auth_provider_x509_cert_url"],
+        "client_x509_cert_url": st.secrets["google_service_account"]["client_x509_cert_url"]
+    }
+
+    credentials = ServiceAccountCredentials.from_json_keyfile_dict(service_account_info, scope)
     client = gspread.authorize(credentials)
 
     # 2. Conectarse al documento y hoja
