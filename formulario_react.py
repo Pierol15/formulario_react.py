@@ -81,8 +81,9 @@ if st.button("Enviar formulario"):
     client = gspread.authorize(credentials)
 
     # 2. Conectarse al documento y hoja
-    nombre_hoja = "FormularioIA-Datos"  # Cambia esto si tu hoja tiene otro nombre
-    sheet = client.open(nombre_hoja).sheet1  # Primera hoja del archivo
+    nombre_hoja = "Respuestas_Formulario_IA"
+  
+    sheet = client.open(nombre_hoja).sheet1  
 
     # 3. Preparar los datos como una fila
     fila = [edad] + ia_respuestas + laboral_respuestas
