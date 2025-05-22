@@ -89,8 +89,10 @@ if st.button("Enviar formulario"):
     fila = [edad] + ia_respuestas + laboral_respuestas
 
  
-    if sheet.get_all_values() == []:
-        sheet.append_row(encabezados)
+    # 4. Si la hoja no tiene encabezados, los agregamos
+    primer_fila = sheet.row_values(1)
+if not primer_fila or all(cell.strip() == "" for cell in primer_fila):
+    sheet.insert_row(encabezados, 1)
 
     # 5. Enviar datos
     sheet.append_row(fila)
